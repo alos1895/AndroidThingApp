@@ -3,6 +3,7 @@ package alos1895.androidthingapp;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Switch;
 
 import com.google.android.things.pio.Gpio;
 import com.google.android.things.pio.PeripheralManager;
@@ -34,12 +35,14 @@ public class HomeActivity extends Activity {
 
     private static final String TAG = HomeActivity.class.getSimpleName();
     private Gpio mLedGpio;
+    Switch simpleSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        simpleSwitch = (Switch) findViewById(R.id.switch1);
         Log.i(TAG, "Starting ButtonActivity");
         PeripheralManager pioService = PeripheralManager.getInstance();
         try {
@@ -49,24 +52,32 @@ public class HomeActivity extends Activity {
         } catch (IOException e) {
             Log.e(TAG, "Error configuring GPIO pins", e);
         }
+
     }
     @Override
     protected void onStart() {
         super.onStart();
+
         Runnable ledBlinker = new Runnable() {
             @Override
             public void run() {
-                while(true) {
+                while(true) {/*
                     // Turn on the LED
                     setLedValue(true);
                     sleep(3000);
                     // Turn off the LED
                     setLedValue(false);
-                    sleep(3000);
+                    sleep(3000);*/
+                    if(simpleSwitch.isChecked()){
+                        setLedValue(true);
+                    }else{
+                        setLedValue(false);
+                    }
                 }
             }
         };
         new Thread(ledBlinker).start();
+
     }
 
     private void sleep(int milliseconds){
